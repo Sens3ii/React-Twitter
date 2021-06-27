@@ -12,19 +12,31 @@ export default class App extends Component {
 		super(props);
 		this.state = {
 			data: [
-				{ label: "Hello guys this is my Twitter subscribe and like", important: true, like: false, id: 1 },
-				{ label: "Yeah! Thanks guys I really appreciated your activity", important: true, like: false, id: 2 },
+				{ label: "Hello guys this is my Twitter subscribe and like", important: false, like: false, id: 1 },
+				{ label: "Yeah! Thanks guys I really appreciated your activity", important: false, like: true, id: 2 },
 				{ label: "OMG Someone hacked my account!!!! Noooo wayyyy", important: true, like: false, id: 3 },
-				{ label: "Hmmmm wait a minute...", important: true, like: false, id: 4 },
-				{ label: "Hey guys I'm nice", important: true, like: false, id: 5 },
-				{ label: "Something wrong with my messages", important: true, like: false, id: 6 },
+				{ label: "Hmmmm wait a minute...", important: false, like: false, id: 4 },
+				{ label: "Hey guys I'm nice", important: false, like: false, id: 5 },
+				{ label: "Something wrong with my messages", important: false, like: false, id: 6 },
 			],
+			term: "",
+			filter: "",
 		};
 		this.maxId = 6;
 		this.deleteItem = this.deleteItem.bind(this);
 		this.addItem = this.addItem.bind(this);
 		this.onToggleImportant = this.onToggleImportant.bind(this);
 		this.onToggleLiked = this.onToggleLiked.bind(this);
+		this.onUpdateSearch = this.onUpdateSearch.bind(this);
+	}
+
+	searchPost(items, term) {
+		if (term.length === 0) {
+			return items;
+		}
+		return items.filter((item) => {
+			return item.label.indexOf(term) > -1;
+		});
 	}
 
 	deleteItem(id) {
@@ -61,19 +73,24 @@ export default class App extends Component {
 		});
 	}
 
+	onUpdateSearch(term) {
+		this.setState({ term: term });
+	}
 	render() {
-		const { data } = this.state;
+		const { data, term } = this.state;
 		const likedCnt = data.filter((item) => item.like).length;
 		const postsCnt = data.length;
+
+		const visiblePosts = this.searchPost(data, term);
 		return (
 			<div className="app">
 				<AppHeader likedCnt={likedCnt} postsCnt={postsCnt} />
 				<div className="search-panel d-flex">
-					<SearchPanel />
+					<SearchPanel onUpdateSearch={this.onUpdateSearch} />
 					<PostStatusFilter />
 				</div>
 				<PostList
-					posts={data}
+					posts={visiblePosts}
 					onDelete={this.deleteItem}
 					onToggleImportant={this.onToggleImportant}
 					onToggleLiked={this.onToggleLiked}
