@@ -20,7 +20,7 @@ export default class App extends Component {
 				{ label: "Something wrong with my messages", important: false, like: false, id: 6 },
 			],
 			term: "",
-			filter: "",
+			filter: "all",
 		};
 		this.maxId = 6;
 		this.deleteItem = this.deleteItem.bind(this);
@@ -28,6 +28,7 @@ export default class App extends Component {
 		this.onToggleImportant = this.onToggleImportant.bind(this);
 		this.onToggleLiked = this.onToggleLiked.bind(this);
 		this.onUpdateSearch = this.onUpdateSearch.bind(this);
+		this.onFilterSelect = this.onFilterSelect.bind(this);
 	}
 
 	searchPost(items, term) {
@@ -38,7 +39,13 @@ export default class App extends Component {
 			return item.label.indexOf(term) > -1;
 		});
 	}
-
+	filterPost(items, filter) {
+		if (filter === "like") {
+			return items.filter((item) => item.like);
+		} else {
+			return items;
+		}
+	}
 	deleteItem(id) {
 		this.setState(({ data }) => {
 			const newData = data.filter((elem) => elem.id !== id);
@@ -76,18 +83,21 @@ export default class App extends Component {
 	onUpdateSearch(term) {
 		this.setState({ term: term });
 	}
+	onFilterSelect(filter) {
+		this.setState({ filter: filter });
+	}
 	render() {
-		const { data, term } = this.state;
+		const { data, term, filter } = this.state;
 		const likedCnt = data.filter((item) => item.like).length;
 		const postsCnt = data.length;
 
-		const visiblePosts = this.searchPost(data, term);
+		const visiblePosts = this.filterPost(this.searchPost(data, term), filter);
 		return (
 			<div className="app">
 				<AppHeader likedCnt={likedCnt} postsCnt={postsCnt} />
 				<div className="search-panel d-flex">
 					<SearchPanel onUpdateSearch={this.onUpdateSearch} />
-					<PostStatusFilter />
+					<PostStatusFilter filter={filter} onFilterSelect={this.onFilterSelect} />
 				</div>
 				<PostList
 					posts={visiblePosts}
