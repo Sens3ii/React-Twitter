@@ -8,6 +8,15 @@ import PostAddForm from "../post-add-form";
 import "./app.css";
 
 const App = () => {
+	const data = [
+		{ label: "Hello guys this is my Twitter subscribe and like", important: true, id: "3feafeaf" },
+		{ label: "Yeah! Thanks guys I really appreciated your activity", id: "3fefefeaf" },
+		{ label: "OMG Someone hacked my account!!!! Noooo wayyyy", id: "3feaf43eaf" },
+		{ label: "Hmmmm wait a minute...", id: "3feaf55eaf" },
+		{ label: "Hey guys I'm nice", id: "3feafe65af" },
+		{ label: "Something wrong with my messages", id: "3fe87afeaf" },
+	];
+
 	return (
 		<div className="app">
 			<AppHeader />
@@ -15,7 +24,7 @@ const App = () => {
 				<SearchPanel />
 				<PostStatusFilter />
 			</div>
-			<PostList />
+			<PostList posts={data} />
 			<PostAddForm />
 		</div>
 	);
